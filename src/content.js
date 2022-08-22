@@ -205,7 +205,8 @@ function startObservers() {
 
 function addPinnedToggle() {
     const searchForm = document.querySelector(Selectors.SEARCH_FORM).parentNode;
-    searchForm.appendChild((new PinnedToggle()).create());
+    let toggle = searchForm.querySelectorAll('.pinned-toggle')
+    if(!toggle.length) searchForm.appendChild((new PinnedToggle()).create());
 }
 
 function hideBulkActionButtonsIfNecessary() {

@@ -208,6 +208,7 @@ html.inboxy .bundle-row .flex-grow {
 
 html.inboxy .bundle-row > .select {
     margin-left: 4px;
+    min-width: 40px;
     opacity: .54;
 }
 html.inboxy .bundle-row:hover > .select {

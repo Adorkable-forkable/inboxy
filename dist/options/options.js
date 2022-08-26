@@ -23,9 +23,13 @@ function saveOptions() {
     const groupMessagesByDate = document.getElementById('group-by-date-checkbox').checked;
     const useLabelColors = document.getElementById('use-label-colors-checkbox').checked;
 
+    const actionButtons = document.querySelectorAll('.action:checked');
+    const actions = [...actionButtons].map(button => button.value);
+
     chrome.storage.sync.set({
         exclude: !!exclude,
         labels: labels,
+        actions: actions,
         groupMessagesByDate: !!groupMessagesByDate,
         useLabelColors: !!useLabelColors,
     }, function() {
@@ -43,6 +47,7 @@ function restoreOptions() {
     chrome.storage.sync.get({
         exclude: true,
         labels: [],
+        actions: ['archive'],
         groupMessagesByDate: true,
         useLabelColors: true,  // TODO: Should be default false?
     }, function(items) {
@@ -55,9 +60,13 @@ function restoreOptions() {
           labelList.placeholder = PLACEHOLDER;
         }
 
+        for (const action of items.actions) {
+            document.getElementById(`${action}-checkbox`).checked = true;
+        }
         document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate;
         document.getElementById('use-label-colors-checkbox').checked = items.useLabelColors;
 
+        document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate;
     });
 }
 document.getElementById('save-button').addEventListener('click', saveOptions);

@@ -30,6 +30,7 @@ const GmailClasses = {
     ARCHIVE_BUTTON: 'brq bqX',
     CELL: 'xY',
     DATE_CELL: 'xW',
+    DELETE_BUTTON: 'ar9 bqX',
     IMPORTANCE_MARKER: 'WA',
     PERSONAL_LEVEL_INDICATOR: 'bnk',
     READ: 'yO',
@@ -50,6 +51,7 @@ const InboxyClasses = {
     MESSAGES_DEFAULT_THEME: 'messages-default-theme',
     INBOXY: 'inboxy',
     LAST: 'last',
+    SELECT_BUTTON: 'select-all bqX',
     SHOW_PINNED_TOGGLE: 'show-pinned-toggle',
     VIEW_ALL_LINK: 'view-all-link',
     VISIBLE: 'visible',
@@ -95,6 +97,7 @@ const Selectors = {
     TABPANELS: `${MAIN} [role="tabpanel"]`,
     TABLE_BODY: `.F tbody`,
     TOOLBAR_ARCHIVE_BUTTON: `.G-atb:not([style*="none"]) .T-I.J-J5-Ji[act="7"]`,
+    TOOLBAR_DELETE_BUTTON: `.G-atb:not([style*="none"]) .T-I.J-J5-Ji[act="10"]`,
     UNSTARRED: `.T-KT.aXw`,
 };
 

@@ -94,10 +94,12 @@ class MessageSelectHandler {
                 message.classList.contains(GmailClasses.SELECTED)) 
             {
                 this.inboxyStyler.markSelectedBundlesFor(
+                    this.selectiveBundling.findRelevantLabels(message));
+              this.inboxyStyler.markSelectedBundlesFor(
                     this.selectiveBundling.findRelevantLabels(message).map(l => l.title));
-                this.inboxyStyler.disableBulkArchiveIfNecessary();
+                this.inboxyStyler.disableBulkActionsIfNecessary();
             }
-        });    
+        });
     }
 }
 

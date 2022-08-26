@@ -314,7 +314,7 @@ class Bundler {
 
     _applyStyles(messageNodes) {
         this.inboxyStyler.markSelectedBundles();
-        this.inboxyStyler.disableBulkArchiveIfNecessary();
+        this.inboxyStyler.disableBulkActionsIfNecessary();
     }
 
     _attachHandlers(messageNodes, messageList) {

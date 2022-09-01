@@ -88,7 +88,7 @@ function _processMessages(selector, selectMessagesFunction) {
         resolve();
     });
 
-    Promise.all([buttonIsVisible, selectMessages]).then(() => _simulateClick(toolbarActionButton));
+    Promise.all([selectMessages]).then(() => _simulateClick(toolbarActionButton));
 }
 
 /**

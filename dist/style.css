@@ -120,7 +120,7 @@ html.inboxy .bundle-row.visible .xY.yX {
 html.inboxy .bundle-row.visible .bundle-and-count {
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-left: -15px;
+    margin-left: -60px;
 }
 
 /* Make bundle labels look like Gmail labels */

@@ -63,6 +63,11 @@ function _create(action, spanClass, selector, selectMessagesFunction) {
     return actionSpan;
 }
 
+function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+
 function _processMessages(selector, selectMessagesFunction) {
     if (selector === null) {
         selectMessagesFunction();
@@ -85,7 +90,9 @@ function _processMessages(selector, selectMessagesFunction) {
 
     const selectMessages = new Promise((resolve, reject) => {
         selectMessagesFunction();
-        resolve();
+        sleep(200).then(() => {
+            resolve();
+        });
     });
 
     Promise.all([selectMessages]).then(() => _simulateClick(toolbarActionButton));

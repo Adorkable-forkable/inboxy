@@ -14,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-const PLACEHOLDER = 'Add the name of each bundle on a new line, for example:\n\nBank\nSchool\nAppointments';
+const PLACEHOLDER = 'Add the name of each bundle on a new line, for example:\n\nBank\nSchool\nAppointments'
 
 function saveOptions() {
-    const exclude = document.getElementById('exclude-radio').checked;
-    const labelList = document.getElementById('label-list');
-    const labels = labelList.value.split(/[\n]+/).map(s => s.trim()).filter(s => !!s);
-    const groupMessagesByDate = document.getElementById('group-by-date-checkbox').checked;
-    const useLabelColors = document.getElementById('use-label-colors-checkbox').checked;
+    const exclude = document.getElementById('exclude-radio').checked
+    const labelList = document.getElementById('label-list')
+    const labels = labelList.value.split(/[\n]+/).map(s => s.trim()).filter(s => !!s)
+    const groupMessagesByDate = document.getElementById('group-by-date-checkbox').checked
+    const useLabelColors = document.getElementById('use-label-colors-checkbox').checked
+    const showDisplayedMessageCount = document.getElementById('show-displayed-message-count-checkbox').checked
 
-    const actionButtons = document.querySelectorAll('.action:checked');
-    const actions = [...actionButtons].map(button => button.value);
+    const actionButtons = document.querySelectorAll('.action:checked')
+    const actions = [...actionButtons].map(button => button.value)
 
     chrome.storage.sync.set({
         exclude: !!exclude,
@@ -32,15 +33,16 @@ function saveOptions() {
         actions: actions,
         groupMessagesByDate: !!groupMessagesByDate,
         useLabelColors: !!useLabelColors,
-    }, function() {
-        labelList.value = labels.join('\n');
+        showDisplayedMessageCount: !!showDisplayedMessageCount,
+    }, function () {
+        labelList.value = labels.join('\n')
 
-        const saveButton = document.getElementById('save-button');
-        saveButton.classList.add('saved');
+        const saveButton = document.getElementById('save-button')
+        saveButton.classList.add('saved')
         setTimeout(() => {
-            saveButton.classList.remove('saved');
-        }, 3000);
-    });
+            saveButton.classList.remove('saved')
+        }, 3000)
+    })
 }
 
 function restoreOptions() {
@@ -50,26 +52,28 @@ function restoreOptions() {
         actions: ['archive'],
         groupMessagesByDate: true,
         useLabelColors: true,  // TODO: Should be default false?
-    }, function(items) {
-        const id = items.exclude ? 'exclude-radio' : 'include-radio';
-        document.getElementById(id).checked = true;
+        showDisplayedMessageCount: true,
+    }, function (items) {
+        const id = items.exclude ? 'exclude-radio' : 'include-radio'
+        document.getElementById(id).checked = true
 
-        const labelList = document.getElementById('label-list');
-        labelList.value = items.labels.join('\n');
+        const labelList = document.getElementById('label-list')
+        labelList.value = items.labels.join('\n')
         if (!items.labels.length) {
-          labelList.placeholder = PLACEHOLDER;
+            labelList.placeholder = PLACEHOLDER
         }
 
         for (const action of items.actions) {
-            document.getElementById(`${action}-checkbox`).checked = true;
+            document.getElementById(`${action}-checkbox`).checked = true
         }
-        document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate;
-        document.getElementById('use-label-colors-checkbox').checked = items.useLabelColors;
+        document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate
+        document.getElementById('use-label-colors-checkbox').checked = items.useLabelColors
+        document.getElementById('show-displayed-message-count-checkbox').checked = items.showDisplayedMessageCount
 
-        document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate;
-    });
+        document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate
+    })
 }
-document.getElementById('save-button').addEventListener('click', saveOptions);
+document.getElementById('save-button').addEventListener('click', saveOptions)
 
 
 //
@@ -77,37 +81,37 @@ document.getElementById('save-button').addEventListener('click', saveOptions);
 //
 
 function selectTab(tabIndex, subtitle) {
-    const tabs = [...document.querySelectorAll('main .tab')];
+    const tabs = [...document.querySelectorAll('main .tab')]
     for (let i = 0; i < tabs.length; i++) {
-        tabs[i].style.display = i === tabIndex ? 'block' : 'none';
+        tabs[i].style.display = i === tabIndex ? 'block' : 'none'
     }
 
-    const tabLinks = [...document.querySelectorAll('.nav-links li')];
+    const tabLinks = [...document.querySelectorAll('.nav-links li')]
     for (let i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].style.fontWeight = i === tabIndex ? '700' : '';
+        tabLinks[i].style.fontWeight = i === tabIndex ? '700' : ''
     }
 
-    document.querySelector('title').innerText = `inboxy - ${subtitle}`;
+    document.querySelector('title').innerText = `inboxy - ${subtitle}`
 }
 
 document.querySelectorAll('.nav-links li').forEach((e, i) => {
-    e.addEventListener('click', () => selectTab(i, e.innerText));
-});
+    e.addEventListener('click', () => selectTab(i, e.innerText))
+})
 
 function initializeTab() {
     // Set the initial tab, based on the hash
-    const parts = window.location.href.split('#');
+    const parts = window.location.href.split('#')
     if (parts.length < 2 || parts[1].length === 0) {
-        selectTab(1, 'Options');
-        restoreOptions();
+        selectTab(1, 'Options')
+        restoreOptions()
     }
     else if (parts[1] === 'help') {
-        selectTab(2, 'Help');
+        selectTab(2, 'Help')
     }
     else {
-        selectTab(0, 'Get started');
+        selectTab(0, 'Get started')
     }
 }
 
-initializeTab();
-window.addEventListener('hashchange', initializeTab);
+initializeTab()
+window.addEventListener('hashchange', initializeTab)

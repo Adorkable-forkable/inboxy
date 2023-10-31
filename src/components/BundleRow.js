@@ -14,53 +14,58 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import BulkActionButton from './BulkActionButton';
+import BulkActionButton from './BulkActionButton'
 
-import MessagePageUtils from '../util/MessagePageUtils';
-import DomUtils from '../util/DomUtils';
-import { 
-    GmailClasses, 
+import {
+    GmailClasses,
     InboxyClasses,
     Selectors,
-} from '../util/Constants';
+} from '../util/Constants'
+import DomUtils from '../util/DomUtils'
 
-const MAX_MESSAGE_COUNT = 25;
+const MAX_MESSAGE_COUNT = 25
 
 // TODO: Using colors sholuld default to false?
-let useLabelColorsSetting = true;
+let useLabelColorsSetting = true
 chrome.storage.sync.get(['useLabelColors'], ({ useLabelColors = true }) => {
-    useLabelColorsSetting = useLabelColors;
-});
+    useLabelColorsSetting = useLabelColors
+})
+
+let showDisplayedMessageCountSetting = true
+chrome.storage.sync.get(['showDisplayedMessageCount'], ({ showDisplayedMessageCount = true }) => {
+    showDisplayedMessageCountSetting = showDisplayedMessageCount
+})
 
 /**
  * Create a table row for a bundle, to be shown in the list of messages. 
  */
 function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textColor, backgroundColor, borderColor) {
-    const displayedMessageCount = messages.length >= MAX_MESSAGE_COUNT 
-        ? `${MAX_MESSAGE_COUNT}+` 
-        : messages.length;
-    const unreadClass = hasUnread ? GmailClasses.UNREAD : GmailClasses.READ;
+    const displayedMessageCount = messages.length >= MAX_MESSAGE_COUNT
+        ? `${MAX_MESSAGE_COUNT}+`
+        : messages.length
+    const displayedMessageCountContent = showDisplayedMessageCountSetting ? `<span class="bundle-count">(${displayedMessageCount})</span>` : ''
+    const unreadClass = hasUnread ? GmailClasses.UNREAD : GmailClasses.READ
 
-    let spacerClass = '';
+    let spacerClass = ''
     if (document.querySelector(Selectors.IMPORTANCE_MARKER)) {
-        spacerClass = GmailClasses.IMPORTANCE_MARKER;
+        spacerClass = GmailClasses.IMPORTANCE_MARKER
     }
     else if (document.querySelector(Selectors.PERSONAL_LEVEL_INDICATOR)) {
-        spacerClass = GmailClasses.PERSONAL_LEVEL_INDICATOR;
+        spacerClass = GmailClasses.PERSONAL_LEVEL_INDICATOR
     }
 
-    const sendersText = _generateSendersText(messages).join(', ');
+    const sendersText = _generateSendersText(messages).join(', ')
 
-    const snoozedText = messages[0].querySelector(Selectors.MESSAGE_SNOOZED_TEXT);
+    const snoozedText = messages[0].querySelector(Selectors.MESSAGE_SNOOZED_TEXT)
     const latestDate = snoozedText
         ? snoozedText.innerText
-        : messages[0].querySelector(Selectors.MESSAGE_DATE_SPAN).innerText;
+        : messages[0].querySelector(Selectors.MESSAGE_DATE_SPAN).innerText
 
-    const latestIsUnreadClass = messages[0].classList.contains(GmailClasses.UNREAD) ? 'unread' : '';
-    const latestIsSnoozedClass = snoozedText ? GmailClasses.SNOOZED : '';
+    const latestIsUnreadClass = messages[0].classList.contains(GmailClasses.UNREAD) ? 'unread' : ''
+    const latestIsSnoozedClass = snoozedText ? GmailClasses.SNOOZED : ''
 
-    const labelColorStyle = useLabelColorsSetting ? `style="color: ${textColor}; background-color: ${backgroundColor}; border-color: ${borderColor};"` : '';
-    
+    const labelColorStyle = useLabelColorsSetting ? `style="color: ${textColor}; background-color: ${backgroundColor}; border-color: ${borderColor};"` : ''
+
     const html = `
         <tr class="${GmailClasses.ROW} ${InboxyClasses.BUNDLE_ROW} ${unreadClass}">
             <td class="${GmailClasses.CELL} PF"></td>
@@ -69,7 +74,7 @@ function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textCo
             <td class="${GmailClasses.CELL} yX">
                 <div class="bundle-and-count">
                     <span ${labelColorStyle}>${label}</span>
-                    <span class="bundle-count">(${displayedMessageCount})</span>
+                    ${displayedMessageCountContent}
                 </div>
             </td>
             <td class="${GmailClasses.CELL} ${GmailClasses.SUBJECT_CELL}">
@@ -79,22 +84,22 @@ function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textCo
             </td>
             <td class="${GmailClasses.CELL} flex-grow"></td>
         </tr>
-    `;
+    `
 
-    const bulkArchiveButton = BulkActionButton.createArchive(messages);
-    const bulkDeleteButton = BulkActionButton.createDelete(messages);
-    const bulkSelectButton = BulkActionButton.createSelect(messages);
-    const bulkActionsTd = DomUtils.htmlToElement(`<td class="${GmailClasses.CELL}"></td>`);
-    bulkActionsTd.appendChild(bulkArchiveButton);
-    bulkActionsTd.appendChild(bulkDeleteButton);
-    const bulkSelectTd = DomUtils.htmlToElement(`<td class="${GmailClasses.CELL} select" style="order: 0;"></td>`);
-    bulkSelectTd.appendChild(bulkSelectButton);
+    const bulkArchiveButton = BulkActionButton.createArchive(messages)
+    const bulkDeleteButton = BulkActionButton.createDelete(messages)
+    const bulkSelectButton = BulkActionButton.createSelect(messages)
+    const bulkActionsTd = DomUtils.htmlToElement(`<td class="${GmailClasses.CELL}"></td>`)
+    bulkActionsTd.appendChild(bulkArchiveButton)
+    bulkActionsTd.appendChild(bulkDeleteButton)
+    const bulkSelectTd = DomUtils.htmlToElement(`<td class="${GmailClasses.CELL} select" style="order: 0;"></td>`)
+    bulkSelectTd.appendChild(bulkSelectButton)
 
     const labelUrl = label
         .split(' ').join('-')
         .split('/').join('%2F')
-        .split('&').join('-');
-    const url = `${baseUrl}#search/label%3AInbox+label%3A${labelUrl}`;
+        .split('&').join('-')
+    const url = `${baseUrl}#search/label%3AInbox+label%3A${labelUrl}`
     const viewAllButtonHtml = `
         <td class="${GmailClasses.CELL}">
             <a 
@@ -106,7 +111,7 @@ function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textCo
                 </div>
             </a>
         </td>
-    `;
+    `
 
     const bundleDateHtml = `
         <td class="bundle-date-cell ${snoozedText ? '' : GmailClasses.DATE_CELL} ${GmailClasses.CELL}">
@@ -114,49 +119,48 @@ function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textCo
                 ${latestDate}
             </span>
         </td>
-    `;
+    `
 
-    const el = DomUtils.htmlToElement(html);
-    el.insertBefore(bulkSelectTd, el.childNodes[2]);
-    el.appendChild(DomUtils.htmlToElement(bundleDateHtml));
-    el.appendChild(bulkActionsTd);
-    el.appendChild(DomUtils.htmlToElement(viewAllButtonHtml));
+    const el = DomUtils.htmlToElement(html)
+    el.insertBefore(bulkSelectTd, el.childNodes[2])
+    el.appendChild(DomUtils.htmlToElement(bundleDateHtml))
+    el.appendChild(bulkActionsTd)
+    el.appendChild(DomUtils.htmlToElement(viewAllButtonHtml))
 
     el.addEventListener('click', e => {
-        if (!e.target.matches(`.${InboxyClasses.VIEW_ALL_LINK}`) && 
-            !e.target.matches('.view-all')) 
-        {
-            toggleBundle(label);
+        if (!e.target.matches(`.${InboxyClasses.VIEW_ALL_LINK}`) &&
+            !e.target.matches('.view-all')) {
+            toggleBundle(label)
         }
-        
-        // Don't propagate to handler for click-outside to close bundle
-        e.stopPropagation();
-    });
-    el.style.order = order;
 
-    return el;
+        // Don't propagate to handler for click-outside to close bundle
+        e.stopPropagation()
+    })
+    el.style.order = order
+
+    return el
 }
 
 function _generateSendersText(messages) {
-    const dedupedSenders = [];
-    const unreadStatusBySenders = {};
+    const dedupedSenders = []
+    const unreadStatusBySenders = {}
 
     for (let i = 0; i < messages.length; i++) {
-        const message = messages[i];
+        const message = messages[i]
         const sendersElements = [...message.querySelectorAll(Selectors.SENDERS)];;
-        
+
         for (let j = sendersElements.length - 1; j >= 0; j--) {
-            const sender = sendersElements[j].innerText;
+            const sender = sendersElements[j].innerText
             if (!unreadStatusBySenders.hasOwnProperty(sender)) {
-                dedupedSenders.push(sender);
+                dedupedSenders.push(sender)
             }
-            const isUnread = sendersElements[j].classList.contains(GmailClasses.UNREAD_SENDER);
-            unreadStatusBySenders[sender] = !!unreadStatusBySenders[sender] || isUnread;
+            const isUnread = sendersElements[j].classList.contains(GmailClasses.UNREAD_SENDER)
+            unreadStatusBySenders[sender] = !!unreadStatusBySenders[sender] || isUnread
         }
     }
 
-    return dedupedSenders.map(s => 
+    return dedupedSenders.map(s =>
         unreadStatusBySenders[s] ? `<span class="unread-sender">${s}</span>` : s)
 }
 
-export default { create };
+export default { create }

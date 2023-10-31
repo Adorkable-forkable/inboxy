@@ -36,14 +36,33 @@ chrome.storage.sync.get(['showDisplayedMessageCount'], ({ showDisplayedMessageCo
     showDisplayedMessageCountSetting = showDisplayedMessageCount
 })
 
+let showDisplayedMessageCountOnlyMultipleSetting = false
+chrome.storage.sync.get(['showDisplayedMessageCountOnlyMultiple'], ({ showDisplayedMessageCountOnlyMultiple = false }) => {
+    showDisplayedMessageCountOnlyMultipleSetting = showDisplayedMessageCountOnlyMultiple
+})
+
+function createDisplayedMessageCountContent(messages) {
+    if (!showDisplayedMessageCountSetting) {
+        return ''
+    }
+
+    if (messages.length === 1 && showDisplayedMessageCountOnlyMultipleSetting) {
+        return ''
+    }
+
+    const displayedMessageCount = messages.length >= MAX_MESSAGE_COUNT
+        ? `${MAX_MESSAGE_COUNT}+`
+        : messages.length
+
+    return `<span class="bundle-count">(${displayedMessageCount})</span>`
+}
+
 /**
  * Create a table row for a bundle, to be shown in the list of messages. 
  */
 function create(label, order, messages, hasUnread, toggleBundle, baseUrl, textColor, backgroundColor, borderColor) {
-    const displayedMessageCount = messages.length >= MAX_MESSAGE_COUNT
-        ? `${MAX_MESSAGE_COUNT}+`
-        : messages.length
-    const displayedMessageCountContent = showDisplayedMessageCountSetting ? `<span class="bundle-count">(${displayedMessageCount})</span>` : ''
+    const displayedMessageCountContent = createDisplayedMessageCountContent(messages)
+
     const unreadClass = hasUnread ? GmailClasses.UNREAD : GmailClasses.READ
 
     let spacerClass = ''

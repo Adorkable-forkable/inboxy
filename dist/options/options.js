@@ -23,6 +23,7 @@ function saveOptions() {
     const groupMessagesByDate = document.getElementById('group-by-date-checkbox').checked
     const useLabelColors = document.getElementById('use-label-colors-checkbox').checked
     const showDisplayedMessageCount = document.getElementById('show-displayed-message-count-checkbox').checked
+    const showDisplayedMessageCountOnlyMultiple = document.getElementById('show-displayed-message-count-only-multiple-checkbox').checked
 
     const actionButtons = document.querySelectorAll('.action:checked')
     const actions = [...actionButtons].map(button => button.value)
@@ -34,6 +35,7 @@ function saveOptions() {
         groupMessagesByDate: !!groupMessagesByDate,
         useLabelColors: !!useLabelColors,
         showDisplayedMessageCount: !!showDisplayedMessageCount,
+        showDisplayedMessageCountOnlyMultiple: !!showDisplayedMessageCountOnlyMultiple,
     }, function () {
         labelList.value = labels.join('\n')
 
@@ -53,6 +55,7 @@ function restoreOptions() {
         groupMessagesByDate: true,
         useLabelColors: true,  // TODO: Should be default false?
         showDisplayedMessageCount: true,
+        showDisplayedMessageCountOnlyMultiple: false,
     }, function (items) {
         const id = items.exclude ? 'exclude-radio' : 'include-radio'
         document.getElementById(id).checked = true
@@ -69,6 +72,9 @@ function restoreOptions() {
         document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate
         document.getElementById('use-label-colors-checkbox').checked = items.useLabelColors
         document.getElementById('show-displayed-message-count-checkbox').checked = items.showDisplayedMessageCount
+        var showDisplayedMessageCountOnlyMultipleCheckbox = document.getElementById('show-displayed-message-count-only-multiple-checkbox')
+        showDisplayedMessageCountOnlyMultipleCheckbox.checked = items.showDisplayedMessageCountOnlyMultiple
+        // showDisplayedMessageCountOnlyMultipleCheckbox.disabled = !items.showDisplayedMessageCount
 
         document.getElementById('group-by-date-checkbox').checked = items.groupMessagesByDate
     })
